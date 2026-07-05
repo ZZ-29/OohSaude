@@ -1,0 +1,7 @@
+﻿=== Ooh Saude Push Log 07/05/2026 16:24:08 ===
+Arquivos fonte OK
+Clonando...
+Cloning into 'C:\Users\User\AppData\Local\Temp\OohSaudeRepo'...
+remote: Repository not found.
+fatal: repository 'https://github.com/ZZ-29/OohSaude.git/' not found
+ERRO: Clone falhou. O repositorio OohSaude existe no GitHub?

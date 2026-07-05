@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; worker-src 'self';">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ooh! Saúde">
+<meta name="theme-color" content="#BE185D">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-512.png">
+<title>Ooh! Saúde</title>
+<style>
+:root{--bg:#091C35;--surface:#0D2545;--surface2:#122E54;--surface3:#183760;--primary:#BE185D;--primary2:#9D174D;--accent:#A78BFA;--text:#F1F0FF;--text2:#8885A8;--border:#1E4575;--success:#10B981;--danger:#EF4444;--warn:#F59E0B;--radius:16px;--radius-sm:10px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden;padding-bottom:24px}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:#122E54;color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;opacity:0;transition:all .25s;z-index:999;white-space:nowrap;pointer-events:none;border:1px solid var(--border)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hero{padding:26px 20px 14px;background:linear-gradient(160deg,#3B0B23 0%,#091C35 75%);text-align:center}
+.hero-logo{display:flex;align-items:baseline;justify-content:center;gap:2px;line-height:1;margin-bottom:6px}
+.h-o1{font-size:46px;font-weight:900;color:#F8AA22;font-family:'Poppins',sans-serif;letter-spacing:-3px;position:relative;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:4px solid #F8AA22;border-radius:50%;margin-right:2px}
+.h-o1::after{content:'';width:11px;height:11px;background:#D4880A;border-radius:50%;position:absolute}
+.h-o2{font-size:28px;font-weight:900;color:#A78BFA;font-family:'Poppins',sans-serif;letter-spacing:-1px}
+.h-h{font-size:34px;font-weight:900;color:#fff;font-family:'Poppins',sans-serif}
+.h-exc{font-size:40px;font-weight:900;color:#10B981;font-family:'Poppins',sans-serif;line-height:1}
+.hero-saude{font-size:20px;font-weight:800;color:#FDA4C4;letter-spacing:1px;margin-top:2px}
+.hero-sub{font-size:12px;color:var(--text2);margin-top:10px;display:flex;align-items:center;justify-content:center;gap:6px}
+.tabs{display:flex;margin:16px 16px 16px;background:var(--surface2);border-radius:var(--radius-sm);padding:3px;gap:3px;overflow-x:auto}
+.tab{flex:1;padding:9px 4px;text-align:center;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;border-radius:8px;transition:all .2s;white-space:nowrap}
+.tab.active{background:var(--surface3);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.pane{display:none}
+.pane.active{display:block}
+.section{background:#0D2E38;border:1.5px solid #1E5060;border-radius:var(--radius);padding:18px;margin:0 16px 14px}
+.section-title{font-size:12px;font-weight:700;color:#FDA4C4;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+label.lbl{display:block;font-size:13px;color:#E2E0FF;margin-bottom:7px;font-weight:600}
+input,textarea,select{width:100%;background:#0D2545;border:1.5px solid #1E5060;border-radius:var(--radius-sm);color:#F5F4FF;font-size:15px;padding:12px 14px;outline:none;transition:border-color .2s;font-family:inherit}
+input:focus,textarea:focus,select:focus{border-color:var(--primary)}
+textarea{resize:vertical;min-height:80px}
+select{appearance:none;-webkit-appearance:none}
+.row{display:flex;gap:10px}
+.row .field{flex:1}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:var(--radius);border:none;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;width:100%}
+.btn:active{transform:scale(.98);opacity:.88}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+.btn-success{background:var(--success);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-sm{padding:9px 14px;font-size:12px;width:auto;border-radius:8px}
+[data-humor].humor-ativo{background:var(--primary) !important}
+@media print{
+  body *{display:none !important}
+  #saud-print-area{display:block !important;position:static;background:#fff;color:#111;padding:20px;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+  #saud-print-area *{display:revert !important;color:#111 !important}
+  #saud-print-area h2{font-size:18px;margin:18px 0 8px}
+  #saud-print-area h1{font-size:20px;margin-bottom:4px}
+  #saud-print-area .item{padding:4px 0;border-bottom:1px solid #ccc;font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="hero">
+  <div class="hero-logo">
+    <span class="h-o1"></span><span class="h-o2">oh</span><span class="h-h">!</span><span class="h-exc">&nbsp;</span>
+  </div>
+  <div class="hero-saude">SAÚDE</div>
+  <div class="hero-sub"><span>🔒</span><span>Seus dados ficam só no seu celular</span></div>
+  <button onclick="saudSosAbrir()" style="margin-top:12px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);color:#fca5a5;font-size:12px;font-weight:700;border-radius:20px;padding:7px 16px;display:inline-flex;align-items:center;gap:6px;cursor:pointer">&#x1F6A8; Perfil de emergência</button>
+</div>
+
+<div class="tabs" id="saud-tabs">
+  <div class="tab active" onclick="saudTabSwitch('hoje')">&#x1F4C5; Hoje</div>
+  <div class="tab" onclick="saudTabSwitch('remedios')">&#x1F48A; Remédios</div>
+  <div class="tab" onclick="saudTabSwitch('vitais')">&#x1FA7A; Vitais</div>
+  <div class="tab" onclick="saudTabSwitch('atividade')">&#x1F6B6; Atividade</div>
+  <div class="tab" onclick="saudTabSwitch('vacinas')">&#x1F489; Vacinas</div>
+  <div class="tab" onclick="saudTabSwitch('diario')">&#x1F4DD; Diário</div>
+  <div class="tab" onclick="saudTabSwitch('hist')">&#x1F4CB; Histórico</div>
+</div>
+
+<!-- PANE HOJE -->
+<div class="pane active" id="saud-pane-hoje">
+  <div id="saud-notif-aviso" style="display:none;background:rgba(245,158,11,.15);border:1px solid #B45309;border-radius:10px;padding:12px;font-size:13px;color:#FCD34D;margin:0 16px 12px;text-align:center">
+    &#x1F514; Ative as notificações para receber alarmes de remédio
+    <br><button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="saudPedirNotif()">Ativar notificações</button>
+  </div>
+  <div id="saud-hoje-lista" style="padding:0 16px 24px"></div>
+</div>
+
+<!-- PANE REMÉDIOS / VITAMINAS / SUPLEMENTOS -->
+<div class="pane" id="saud-pane-remedios">
+  <div style="padding:16px 16px 0">
+    <div class="section-title" style="margin-bottom:4px">Novo remédio, vitamina ou suplemento</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:14px">Cada pessoa toma remédios diferentes — preencha um bloco para cada um e adicione quantos precisar.</div>
+  </div>
+  <div id="saud-med-blocos"></div>
+  <div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:10px">
+    <button class="btn" style="background:var(--surface2);border:1.5px dashed #6C3CE1;color:#A78BFA" onclick="saudMedAdicionarBloco()">&#x2B; Adicionar outro remédio</button>
+    <button class="btn btn-primary" id="saud-med-btn-salvar" onclick="saudMedSalvarTodos()">Salvar</button>
+  </div>
+  <div style="padding:0 16px 24px">
+    <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px">CADASTRADOS</div>
+    <div id="saud-med-lista"></div>
+  </div>
+</div>
+
+<!-- PANE VITAIS (sinais vitais + exames de sangue) -->
+<div class="pane" id="saud-pane-vitais">
+  <div style="display:flex;gap:8px;padding:16px 16px 0">
+    <button class="btn btn-sm" id="saud-vit-tab-sinais" onclick="saudVitSubTab('sinais')" style="flex:1;background:var(--surface3)">Sinais vitais</button>
+    <button class="btn btn-sm" id="saud-vit-tab-exames" onclick="saudVitSubTab('exames')" style="flex:1;background:var(--surface2)">Exames de sangue</button>
+  </div>
+
+  <div id="saud-vit-sub-sinais">
+    <div class="section">
+      <div class="section-title">Registrar sinal vital</div>
+      <div class="field">
+        <label class="lbl">Tipo</label>
+        <select id="saud-vital-tipo" onchange="saudVitalTipoMudou()">
+          <option value="pressao">Pressão arterial</option>
+          <option value="glicemia">Glicemia</option>
+          <option value="peso">Peso</option>
+          <option value="freq_cardiaca">Frequência cardíaca</option>
+        </select>
+      </div>
+      <div id="saud-vital-campos"></div>
+      <div class="field">
+        <label class="lbl">Data</label>
+        <input type="date" id="saud-vital-data">
+      </div>
+      <button class="btn btn-primary" onclick="saudVitalSalvar()">&#x2B; Registrar</button>
+    </div>
+    <div style="padding:0 16px 24px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px">EVOLUÇÃO</div>
+      <div id="saud-vital-lista"></div>
+    </div>
+  </div>
+
+  <div id="saud-vit-sub-exames" style="display:none">
+    <div class="section">
+      <div class="section-title">Registrar resultado de exame</div>
+      <div class="field">
+        <label class="lbl">Exame</label>
+        <select id="saud-ex-painel" onchange="saudExamePreset()">
+          <option value="">Selecione um exame comum ou "Outro"</option>
+          <option value="glicemia" data-un="mg/dL" data-min="70" data-max="99">Glicemia em jejum</option>
+          <option value="hba1c" data-un="%" data-min="4" data-max="5.6">Hemoglobina glicada (HbA1c)</option>
+          <option value="colesterol_total" data-un="mg/dL" data-min="0" data-max="199">Colesterol total</option>
+          <option value="ldl" data-un="mg/dL" data-min="0" data-max="129">Colesterol LDL</option>
+          <option value="hdl" data-un="mg/dL" data-min="40" data-max="90">Colesterol HDL</option>
+          <option value="triglicerideos" data-un="mg/dL" data-min="0" data-max="149">Triglicerídeos</option>
+          <option value="tsh" data-un="mUI/L" data-min="0.4" data-max="4.0">TSH (tireoide)</option>
+          <option value="creatinina" data-un="mg/dL" data-min="0.6" data-max="1.3">Creatinina</option>
+          <option value="ureia" data-un="mg/dL" data-min="15" data-max="45">Ureia</option>
+          <option value="tgo" data-un="U/L" data-min="5" data-max="40">TGO / AST</option>
+          <option value="tgp" data-un="U/L" data-min="7" data-max="56">TGP / ALT</option>
+          <option value="vitd" data-un="ng/mL" data-min="30" data-max="100">Vitamina D</option>
+          <option value="ferritina" data-un="ng/mL" data-min="20" data-max="250">Ferritina</option>
+          <option value="hemoglobina" data-un="g/dL" data-min="12" data-max="17">Hemoglobina</option>
+          <option value="pcr" data-un="mg/L" data-min="0" data-max="3">PCR (Proteína C Reativa)</option>
+          <option value="acido_urico" data-un="mg/dL" data-min="3.4" data-max="7.2">Ácido úrico</option>
+          <option value="outro">Outro (personalizado)</option>
+        </select>
+      </div>
+      <div class="field" id="saud-ex-nome-wrap" style="display:none">
+        <label class="lbl">Nome do exame</label>
+        <input type="text" id="saud-ex-nome" placeholder="Ex: Magnésio">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label class="lbl">Valor</label>
+          <input type="number" step="0.01" id="saud-ex-valor" placeholder="Ex: 95">
+        </div>
+        <div class="field">
+          <label class="lbl">Unidade</label>
+          <input type="text" id="saud-ex-unidade" placeholder="mg/dL">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label class="lbl">Ref. mínima</label>
+          <input type="number" step="0.01" id="saud-ex-refmin">
+        </div>
+        <div class="field">
+          <label class="lbl">Ref. máxima</label>
+          <input type="number" step="0.01" id="saud-ex-refmax">
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl">Data do exame</label>
+        <input type="date" id="saud-ex-data">
+      </div>
+      <button class="btn btn-primary" onclick="saudExameSalvar()">&#x2B; Registrar resultado</button>
+      <div style="font-size:11px;color:var(--text2);margin-top:8px">As faixas de referência variam entre laboratórios — confirme sempre no laudo impresso.</div>
+    </div>
+    <div style="padding:0 16px 24px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px">EVOLUÇÃO</div>
+      <div id="saud-ex-lista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PANE ATIVIDADE (passos, água, sono) -->
+<div class="pane" id="saud-pane-atividade">
+  <div class="section">
+    <div class="section-title">Anéis de hoje</div>
+    <div style="display:flex;justify-content:center;padding:6px 0 10px">
+      <svg width="150" height="150" viewBox="0 0 150 150">
+        <circle cx="75" cy="75" r="62" fill="none" stroke="var(--surface3)" stroke-width="10"></circle>
+        <circle cx="75" cy="75" r="62" fill="none" stroke="#10B981" stroke-width="10" stroke-linecap="round" id="saud-anel-passos" transform="rotate(-90 75 75)"></circle>
+        <circle cx="75" cy="75" r="47" fill="none" stroke="var(--surface3)" stroke-width="10"></circle>
+        <circle cx="75" cy="75" r="47" fill="none" stroke="#378ADD" stroke-width="10" stroke-linecap="round" id="saud-anel-agua" transform="rotate(-90 75 75)"></circle>
+        <circle cx="75" cy="75" r="32" fill="none" stroke="var(--surface3)" stroke-width="10"></circle>
+        <circle cx="75" cy="75" r="32" fill="none" stroke="#A78BFA" stroke-width="10" stroke-linecap="round" id="saud-anel-sono" transform="rotate(-90 75 75)"></circle>
+      </svg>
+    </div>
+    <div id="saud-ativ-legenda" style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2)"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Contador de passos ao vivo (opcional)</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:12px">Funciona com o celular no bolso e o app aberto na tela. Toque em iniciar antes de caminhar.</div>
+    <div style="text-align:center;padding:6px 0 14px">
+      <div id="saud-cam-contador" style="font-size:40px;font-weight:900;color:#A78BFA">0</div>
+      <div style="font-size:11px;color:var(--text2)">passos nesta sessão</div>
+    </div>
+    <div class="row">
+      <button class="btn btn-success" id="saud-cam-btn-iniciar" onclick="saudCamIniciar()">&#x25B6; Iniciar</button>
+      <button class="btn btn-danger" id="saud-cam-btn-parar" onclick="saudCamParar()" style="display:none">&#x25A0; Parar e salvar</button>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Registrar passos manualmente</div>
+    <div class="row">
+      <div class="field">
+        <label class="lbl">Passos (opcional)</label>
+        <input type="number" id="saud-cam-passos" placeholder="Ex: 5000">
+      </div>
+      <div class="field">
+        <label class="lbl">Distância km (opcional)</label>
+        <input type="number" step="0.01" id="saud-cam-dist" placeholder="Ex: 3.5">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label class="lbl">Duração min (opcional)</label>
+        <input type="number" id="saud-cam-dur" placeholder="Ex: 40">
+      </div>
+      <div class="field">
+        <label class="lbl">Data</label>
+        <input type="date" id="saud-cam-data">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="saudCamSalvarManual()">&#x2B; Registrar caminhada</button>
+  </div>
+  <div class="section">
+    <div class="section-title">Meta diária de passos</div>
+    <div class="field" style="margin-bottom:0">
+      <input type="number" id="saud-cam-meta" oninput="saudCamMetaSalvar()">
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Água</div>
+    <div style="text-align:center;padding:6px 0 14px">
+      <div id="saud-agua-contador" style="font-size:32px;font-weight:900;color:#378ADD">0 / 8</div>
+      <div style="font-size:11px;color:var(--text2)">copos hoje</div>
+    </div>
+    <div class="row">
+      <button class="btn" style="background:linear-gradient(135deg,#185FA5,#0C447C);color:#fff" onclick="saudAguaAdd(1)">&#x2B; 1 copo</button>
+      <button class="btn" style="background:var(--surface2);color:var(--text2)" onclick="saudAguaAdd(-1)">&#x2212; 1 copo</button>
+    </div>
+    <div class="field" style="margin-top:14px;margin-bottom:0">
+      <label class="lbl">Meta diária de copos</label>
+      <input type="number" id="saud-agua-meta" oninput="saudAguaMetaSalvar()">
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Sono</div>
+    <div class="row" style="margin-bottom:0">
+      <div class="field">
+        <label class="lbl">Horas dormidas (hoje)</label>
+        <input type="number" step="0.5" id="saud-sono-horas" oninput="saudSonoSalvar()" placeholder="Ex: 7.5">
+      </div>
+      <div class="field">
+        <label class="lbl">Meta de horas</label>
+        <input type="number" step="0.5" id="saud-sono-meta" oninput="saudSonoMetaSalvar()">
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Resumo de passos (7 dias)</div>
+    <div id="saud-cam-resumo"></div>
+    <div style="font-size:11px;color:var(--text2);margin-top:6px">Pesquisas recentes indicam que boa parte dos benefícios já aparece por volta de 7.000–8.000 passos/dia — não é preciso travar em 10.000.</div>
+  </div>
+</div>
+
+<!-- PANE VACINAS & CONSULTAS -->
+<div class="pane" id="saud-pane-vacinas">
+  <div class="section">
+    <div class="section-title">Registrar vacina</div>
+    <div class="field">
+      <label class="lbl">Nome da vacina</label>
+      <input type="text" id="saud-vac-nome" placeholder="Ex: Gripe, Tétano, COVID">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label class="lbl">Data tomada</label>
+        <input type="date" id="saud-vac-data">
+      </div>
+      <div class="field">
+        <label class="lbl">Próxima dose (opcional)</label>
+        <input type="date" id="saud-vac-proxima">
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="saudVacSalvar()">&#x2B; Registrar vacina</button>
+  </div>
+  <div style="padding:0 16px 24px">
+    <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px">VACINAS REGISTRADAS</div>
+    <div id="saud-vac-lista"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Registrar consulta médica</div>
+    <div class="row">
+      <div class="field">
+        <label class="lbl">Especialidade</label>
+        <input type="text" id="saud-cons-esp" placeholder="Ex: Cardiologista">
+      </div>
+      <div class="field">
+        <label class="lbl">Médico/clínica (opcional)</label>
+        <input type="text" id="saud-cons-medico" placeholder="Ex: Dr. Silva">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label class="lbl">Data</label>
+        <input type="date" id="saud-cons-data">
+      </div>
+      <div class="field">
+        <label class="lbl">Próximo retorno (opcional)</label>
+        <input type="date" id="saud-cons-retorno">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <label class="lbl">Observações (opcional)</label>
+      <textarea id="saud-cons-obs" placeholder="Anotações da consulta" style="min-height:60px"></textarea>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px" onclick="saudConsSalvar()">&#x2B; Registrar consulta</button>
+  </div>
+  <div style="padding:0 16px 24px">
+    <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px">CONSULTAS</div>
+    <div id="saud-cons-lista"></div>
+  </div>
+</div>
+
+<!-- PANE DIÁRIO (sintomas + humor) -->
+<div class="pane" id="saud-pane-diario">
+  <div class="section">
+    <div class="section-title">Como você está hoje?</div>
+    <div class="field">
+      <label class="lbl">Humor</label>
+      <div id="saud-humor-opcoes" style="display:flex;justify-content:space-between;gap:6px">
+        <button type="button" class="btn" data-humor="1" onclick="saudHumorSelecionar(1)" style="background:var(--surface2);font-size:22px;padding:10px">&#x1F61E;</button>
+        <button type="button" class="btn" data-humor="2" onclick="saudHumorSelecionar(2)" style="background:var(--surface2);font-size:22px;padding:10px">&#x1F641;</button>
+        <button type="button" class="btn" data-humor="3" onclick="saudHumorSelecionar(3)" style="background:var(--surface2);font-size:22px;padding:10px">&#x1F610;</button>
+        <button type="button" class="btn" data-humor="4" onclick="saudHumorSelecionar(4)" style="background:var(--surface2);font-size:22px;padding:10px">&#x1F642;</button>
+        <button type="button" class="btn" data-humor="5" onclick="saudHumorSelecionar(5)" style="background:var(--surface2);font-size:22px;padding:10px">&#x1F604;</button>
+      </div>
+    </div>
+    <div class="field">
+      <label class="lbl">Sintomas (opcional)</label>
+      <input type="text" id="saud-diario-sintomas" placeholder="Ex: dor de cabeça, cansaço">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label class="lbl">Intensidade (opcional)</label>
+        <select id="saud-diario-intensidade">
+          <option value="">—</option>
+          <option value="leve">Leve</option>
+          <option value="moderada">Moderada</option>
+          <option value="intensa">Intensa</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="lbl">Data</label>
+        <input type="date" id="saud-diario-data">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:0">
+      <label class="lbl">Anotações (opcional)</label>
+      <textarea id="saud-diario-obs" placeholder="Qualquer coisa que queira registrar" style="min-height:60px"></textarea>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px" onclick="saudDiarioSalvar()">&#x2B; Registrar</button>
+  </div>
+  <div style="padding:0 16px 24px">
+    <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:10px">EVOLUÇÃO</div>
+    <div id="saud-diario-lista"></div>
+  </div>
+</div>
+
+<!-- PANE HISTÓRICO -->
+<div class="pane" id="saud-pane-hist">
+  <div class="section">
+    <div class="section-title">Backup dos seus dados</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:14px">Seus dados ficam só neste celular. Exporte um arquivo de backup de vez em quando para não perder tudo se trocar de aparelho ou limpar o navegador.</div>
+    <div class="row">
+      <button class="btn btn-primary" onclick="saudBackupExportar()">&#x2B; Exportar backup</button>
+      <button class="btn" style="background:var(--surface2)" onclick="document.getElementById('saud-backup-arquivo').click()">Importar backup</button>
+    </div>
+    <input type="file" id="saud-backup-arquivo" accept="application/json" style="display:none" onchange="saudBackupImportar(event)">
+  </div>
+  <div class="section">
+    <div class="section-title">Resumo para o médico</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:14px">Gera um resumo com remédios, sinais vitais, exames e vacinas para imprimir ou salvar como PDF.</div>
+    <button class="btn" style="background:var(--surface2)" onclick="saudExportarResumo()">&#x1F5A8; Exportar resumo</button>
+  </div>
+  <div style="padding:0 16px 24px" id="saud-hist-lista"></div>
+</div>
+
+<div id="saud-print-area" style="display:none"></div>
+
+<!-- ===== BANNERS DE INSTALAÇÃO ===== -->
+<div id="android-install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 12px);background:linear-gradient(135deg,#3B0B23,#0D1525);border-top:1px solid rgba(190,24,93,0.4);box-shadow:0 -4px 20px rgba(0,0,0,0.5)">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="font-size:24px;flex-shrink:0">🩺</div>
+    <div style="flex:1;min-width:0">
+      <div style="color:#fff;font-weight:700;font-size:15px">Instalar Ooh! Saúde</div>
+      <div style="color:rgba(255,255,255,0.6);font-size:12px">Adicionar à tela inicial — rápido e gratuito</div>
+    </div>
+    <button onclick="androidInstalarAgora()" style="background:linear-gradient(135deg,#BE185D,#9D174D);border:none;color:#fff;font-weight:700;font-size:14px;padding:10px 18px;border-radius:10px;cursor:pointer;white-space:nowrap">Instalar</button>
+    <button onclick="androidDismissBanner()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0">&times;</button>
+  </div>
+</div>
+
+<div id="ios-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 12px);background:linear-gradient(135deg,#3B0B23,#0D1525);border-top:1px solid rgba(190,24,93,0.4);box-shadow:0 -4px 20px rgba(0,0,0,0.5)">
+  <div style="display:flex;align-items:flex-start;gap:12px">
+    <div style="font-size:22px;flex-shrink:0">🩺</div>
+    <div style="flex:1">
+      <div style="color:#fff;font-weight:700;font-size:14px;margin-bottom:4px">Instalar Ooh! Saúde no iPhone</div>
+      <div style="color:rgba(255,255,255,0.65);font-size:12px;line-height:1.5">Toque em <strong style="color:#fff">Compartilhar ↑</strong> → <strong style="color:#fff">"Adicionar à Tela de Início"</strong></div>
+    </div>
+    <button onclick="document.getElementById('ios-banner').style.display='none';localStorage.setItem('ios-saude-dismissed','1')" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:22px;cursor:pointer;padding:4px;line-height:1;flex-shrink:0">&times;</button>
+  </div>
+</div>
+
+<div id="saud-sos-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:10000;background:rgba(0,0,0,.65);padding:20px;overflow-y:auto">
+  <div style="background:var(--surface);border-radius:16px;padding:20px;max-width:380px;margin:30px auto;border:1px solid rgba(239,68,68,.4)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:900;color:#fca5a5">&#x1F6A8; Perfil de emergência</div>
+      <button onclick="saudSosFechar()" style="background:none;border:none;color:var(--text2);font-size:24px;cursor:pointer;line-height:1" aria-label="Fechar">&times;</button>
+    </div>
+    <div id="saud-sos-view"></div>
+    <div id="saud-sos-edit" style="display:none">
+      <div class="field"><label class="lbl">Nome</label><input type="text" id="saud-sos-nome"></div>
+      <div class="row">
+        <div class="field"><label class="lbl">Tipo sanguíneo</label><input type="text" id="saud-sos-tipo-sang" placeholder="Ex: O+"></div>
+        <div class="field"><label class="lbl">Contato de emergência</label><input type="text" id="saud-sos-contato-nome" placeholder="Nome"></div>
+      </div>
+      <div class="field"><label class="lbl">Telefone do contato</label><input type="tel" id="saud-sos-contato-tel" placeholder="(00) 00000-0000"></div>
+      <div class="field"><label class="lbl">Alergias</label><textarea id="saud-sos-alergias" placeholder="Ex: Penicilina, amendoim" style="min-height:50px"></textarea></div>
+      <div class="field" style="margin-bottom:0"><label class="lbl">Condições de saúde</label><textarea id="saud-sos-condicoes" placeholder="Ex: Diabetes, hipertensão" style="min-height:50px"></textarea></div>
+      <button class="btn btn-primary" style="margin-top:14px" onclick="saudSosSalvarPerfil()">Salvar</button>
+    </div>
+    <button class="btn" id="saud-sos-btn-editar" style="background:var(--surface2);margin-top:14px" onclick="saudSosEditar()">Editar informações</button>
+  </div>
+</div>
+
+<script>
+// Sanitização: escapa HTML em dados do usuário antes de injetar no DOM
+function escHtml(s){
+  if(!s)return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function toast(msg,dur){
+  dur=dur||2500;
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},dur);
+}
+
+// ========================
+// SAÚDE (remédios, exames, caminhada)
+// ========================
+var saudInterval = null;
+var saudCamAtivo = false;
+var saudCamPassosSessao = 0;
+var saudCamInicioTs = 0;
+var saudCamAvgAccel = null;
+var saudCamLastPeakTs = 0;
+
+// --- storage ---
+function saudGetMeds(){ return JSON.parse(localStorage.getItem('ooh_saud_meds')||'[]'); }
+function saudSetMeds(list){ localStorage.setItem('ooh_saud_meds', JSON.stringify(list)); }
+function saudGetDoseHist(){ return JSON.parse(localStorage.getItem('ooh_saud_dose_hist')||'[]'); }
+function saudSetDoseHist(list){ localStorage.setItem('ooh_saud_dose_hist', JSON.stringify(list)); }
+function saudGetExames(){ return JSON.parse(localStorage.getItem('ooh_saud_exames')||'[]'); }
+function saudSetExames(list){ localStorage.setItem('ooh_saud_exames', JSON.stringify(list)); }
+function saudGetCaminhadas(){ return JSON.parse(localStorage.getItem('ooh_saud_caminhadas')||'[]'); }
+function saudSetCaminhadas(list){ localStorage.setItem('ooh_saud_caminhadas', JSON.stringify(list)); }
+function saudGetMeta(){ var m=parseInt(localStorage.getItem('ooh_saud_meta_passos'),10); return (m&&m>0)?m:8000; }
+function saudSetMeta(v){ localStorage.setItem('ooh_saud_meta_passos', String(v)); }
+function saudHoje(){ return new Date().toISOString().slice(0,10); }
+
+function saudGetVitais(){ return JSON.parse(localStorage.getItem('ooh_saud_vitais')||'[]'); }
+function saudSetVitais(list){ localStorage.setItem('ooh_saud_vitais', JSON.stringify(list)); }
+function saudGetAgua(){ return JSON.parse(localStorage.getItem('ooh_saud_agua')||'{}'); }
+function saudSetAgua(map){ localStorage.setItem('ooh_saud_agua', JSON.stringify(map)); }
+function saudGetMetaAgua(){ var m=parseInt(localStorage.getItem('ooh_saud_meta_agua'),10); return (m&&m>0)?m:8; }
+function saudSetMetaAgua(v){ localStorage.setItem('ooh_saud_meta_agua', String(v)); }
+function saudGetSono(){ return JSON.parse(localStorage.getItem('ooh_saud_sono')||'{}'); }
+function saudSetSono(map){ localStorage.setItem('ooh_saud_sono', JSON.stringify(map)); }
+function saudGetMetaSono(){ var m=parseFloat(localStorage.getItem('ooh_saud_meta_sono')); return (m&&m>0)?m:8; }
+function saudSetMetaSono(v){ localStorage.setItem('ooh_saud_meta_sono', String(v)); }
+function saudGetVacinas(){ return JSON.parse(localStorage.getItem('ooh_saud_vacinas')||'[]'); }
+function saudSetVacinas(list){ localStorage.setItem('ooh_saud_vacinas', JSON.stringify(list)); }
+function saudGetConsultas(){ return JSON.parse(localStorage.getItem('ooh_saud_consultas')||'[]'); }
+function saudSetConsultas(list){ localStorage.setItem('ooh_saud_consultas', JSON.stringify(list)); }
+function saudGetEmergencia(){ return JSON.parse(localStorage.getItem('ooh_saud_emergencia')||'null'); }
+function saudSetEmergencia(obj){ localStorage.setItem('ooh_saud_emergencia', JSON.stringify(obj)); }
+function saudGetDiario(){ return JSON.parse(localStorage.getItem('ooh_saud_diario')||'[]'); }
+function saudSetDiario(list){ localStorage.setItem('ooh_saud_diario', JSON.stringify(list)); }
+
+var SAUD_BACKUP_KEYS=['ooh_saud_meds','ooh_saud_dose_hist','ooh_saud_exames','ooh_saud_caminhadas','ooh_saud_meta_passos','ooh_saud_vitais','ooh_saud_agua','ooh_saud_meta_agua','ooh_saud_sono','ooh_saud_meta_sono','ooh_saud_vacinas','ooh_saud_consultas','ooh_saud_emergencia','ooh_saud_diario'];
+
+// --- init / tabs ---
+function saudInit(){
+  try{
+    var aviso=document.getElementById('saud-notif-aviso');
+    if(aviso){
+      try{
+        var notifOk=('Notification' in window)&&Notification.permission==='granted';
+        aviso.style.display=notifOk?'none':'block';
+      }catch(_){if(aviso)aviso.style.display='none';}
+    }
+    var exData=document.getElementById('saud-ex-data'); if(exData&&!exData.value) exData.value=saudHoje();
+    var camData=document.getElementById('saud-cam-data'); if(camData&&!camData.value) camData.value=saudHoje();
+    var metaEl=document.getElementById('saud-cam-meta'); if(metaEl) metaEl.value=saudGetMeta();
+    var vitalData=document.getElementById('saud-vital-data'); if(vitalData&&!vitalData.value) vitalData.value=saudHoje();
+    var vacData=document.getElementById('saud-vac-data'); if(vacData&&!vacData.value) vacData.value=saudHoje();
+    var consData=document.getElementById('saud-cons-data'); if(consData&&!consData.value) consData.value=saudHoje();
+    var aguaMetaEl=document.getElementById('saud-agua-meta'); if(aguaMetaEl) aguaMetaEl.value=saudGetMetaAgua();
+    var sonoMetaEl=document.getElementById('saud-sono-meta'); if(sonoMetaEl) sonoMetaEl.value=saudGetMetaSono();
+    var sonoHorasEl=document.getElementById('saud-sono-horas'); if(sonoHorasEl) sonoHorasEl.value=(saudGetSono()[saudHoje()]||'');
+    var diarioData=document.getElementById('saud-diario-data'); if(diarioData&&!diarioData.value) diarioData.value=saudHoje();
+    saudMedInicializarForm();
+    saudVitalTipoMudou();
+    saudRenderHoje();
+    saudRenderMedLista();
+    saudRenderExames();
+    saudRenderVitalLista();
+    saudRenderCamResumo();
+    saudRenderAtividadeRings();
+    saudRenderVacLista();
+    saudRenderConsLista();
+    saudRenderDiarioLista();
+    if(saudInterval) clearInterval(saudInterval);
+    saudInterval=setInterval(saudChecarAlarmes,30000);
+  }catch(e){console.error('saudInit erro:',e);}
+}
+
+function saudPedirNotif(){
+  if(!('Notification' in window)){toast('Notificações não suportadas');return;}
+  Notification.requestPermission().then(function(p){
+    if(p==='granted'){
+      var a=document.getElementById('saud-notif-aviso');
+      if(a) a.style.display='none';
+      toast('Notificações ativadas!');
+    } else {
+      toast('Permissão negada. Ative nas configurações do navegador.');
+    }
+  });
+}
+
+function saudTabSwitch(tab){
+  var names=['hoje','remedios','vitais','atividade','vacinas','diario','hist'];
+  document.querySelectorAll('#saud-tabs .tab').forEach(function(t,i){t.classList.toggle('active',names[i]===tab);});
+  names.forEach(function(n){
+    var p=document.getElementById('saud-pane-'+n);
+    if(p) p.classList.toggle('active',n===tab);
+  });
+  if(tab==='hoje') saudRenderHoje();
+  if(tab==='remedios') saudRenderMedLista();
+  if(tab==='vitais'){ saudRenderVitalLista(); saudRenderExames(); }
+  if(tab==='atividade'){ saudRenderCamResumo(); saudRenderAtividadeRings(); }
+  if(tab==='vacinas'){ saudRenderVacLista(); saudRenderConsLista(); }
+  if(tab==='diario') saudRenderDiarioLista();
+  if(tab==='hist') saudRenderHist();
+}
+
+function saudVitSubTab(sub){
+  var sinaisBtn=document.getElementById('saud-vit-tab-sinais');
+  var examesBtn=document.getElementById('saud-vit-tab-exames');
+  var sinaisPane=document.getElementById('saud-vit-sub-sinais');
+  var examesPane=document.getElementById('saud-vit-sub-exames');
+  if(!sinaisBtn||!examesBtn||!sinaisPane||!examesPane) return;
+  var ativo=sub==='sinais';
+  sinaisPane.style.display=ativo?'block':'none';
+  examesPane.style.display=ativo?'none':'block';
+  sinaisBtn.style.background=ativo?'var(--surface3)':'var(--surface2)';
+  examesBtn.style.background=ativo?'var(--surface2)':'var(--surface3)';
+  if(ativo) saudRenderVitalLista(); else saudRenderExames();
+}
+
+// --- remédios / vitaminas / suplementos ---
+function saudMedIcon(tipo){
+  if(tipo==='suplemento') return '💪';
+  if(tipo==='vitamina') return '🌿';
+  return '💊';
+}
+function saudMedTipoLabel(tipo){
+  if(tipo==='suplemento') return 'Suplemento';
+  if(tipo==='vitamina') return 'Vitamina';
+  return 'Remédio';
+}
+
+// --- cadastro em blocos repetíveis (várias pessoas tomam remédios diferentes) ---
+var saudMedBlocoSeq = 0;
+var saudMedBlocosAtivos = [];
+
+function saudMedBlocoHtml(id, index){
+  return '<div class="section" id="saud-med-bloco-'+id+'">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+      +'<div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:0.5px">REMÉDIO '+index+'</div>'
+      +'<button onclick="saudMedRemoverBloco('+id+')" style="background:none;border:none;color:var(--danger);font-size:15px;cursor:pointer;padding:2px 6px" aria-label="Remover bloco">&#x2715;</button>'
+    +'</div>'
+    +'<div class="field"><label class="lbl">Nome</label><input type="text" class="saud-med-b-nome" placeholder="Nome do remédio, vitamina ou suplemento"></div>'
+    +'<div class="row">'
+      +'<div class="field"><label class="lbl">Tipo</label><select class="saud-med-b-tipo">'
+        +'<option value="remedio">💊 Remédio</option><option value="vitamina">🌿 Vitamina</option><option value="suplemento">💪 Suplemento</option>'
+      +'</select></div>'
+      +'<div class="field"><label class="lbl">Dose (opcional)</label><input type="text" class="saud-med-b-dosagem" placeholder="Ex: 1 comp., 500mg"></div>'
+    +'</div>'
+    +'<div class="field" style="margin-bottom:0"><label class="lbl">Horários (um por linha)</label><textarea class="saud-med-b-horarios" style="min-height:60px" placeholder="08:00&#10;20:00"></textarea></div>'
+  +'</div>';
+}
+
+function saudMedRenderBlocos(){
+  var el=document.getElementById('saud-med-blocos');
+  if(!el) return;
+  el.innerHTML=saudMedBlocosAtivos.map(function(id,i){return saudMedBlocoHtml(id,i+1);}).join('');
+  saudMedAtualizarBotaoSalvar();
+}
+
+function saudMedAdicionarBloco(){
+  saudMedBlocoSeq++;
+  saudMedBlocosAtivos.push(saudMedBlocoSeq);
+  saudMedRenderBlocos();
+}
+
+function saudMedRemoverBloco(id){
+  if(saudMedBlocosAtivos.length<=1){toast('Deixe ao menos um bloco');return;}
+  saudMedBlocosAtivos=saudMedBlocosAtivos.filter(function(x){return x!==id;});
+  saudMedRenderBlocos();
+}
+
+function saudMedAtualizarBotaoSalvar(){
+  var btn=document.getElementById('saud-med-btn-salvar');
+  if(!btn) return;
+  var n=saudMedBlocosAtivos.length;
+  btn.textContent=n>1?('Salvar '+n+' remédios'):'Salvar remédio';
+}
+
+function saudMedInicializarForm(){
+  saudMedBlocoSeq=0;
+  saudMedBlocosAtivos=[];
+  saudMedAdicionarBloco();
+}
+
+function saudMedSalvarTodos(){
+  var blocosEl=document.getElementById('saud-med-blocos');
+  if(!blocosEl) return;
+  var blocos=blocosEl.querySelectorAll('.section');
+  var novos=[];
+  var invalidos=0;
+  var idBase=Date.now();
+  blocos.forEach(function(b){
+    var nome=b.querySelector('.saud-med-b-nome').value.trim();
+    var tipo=b.querySelector('.saud-med-b-tipo').value;
+    var dosagem=b.querySelector('.saud-med-b-dosagem').value.trim();
+    var raw=b.querySelector('.saud-med-b-horarios').value.trim();
+    if(!nome && !raw) return;
+    var horarios=raw.split('\n').map(function(h){return h.trim();}).filter(function(h){return /^\d{1,2}:\d{2}$/.test(h);});
+    horarios=horarios.map(function(h){var p=h.split(':');return p[0].padStart(2,'0')+':'+p[1].padStart(2,'0');});
+    if(!nome || !horarios.length){invalidos++;return;}
+    novos.push({id:idBase+novos.length,nome:nome,horarios:horarios,tipo:tipo,dosagem:dosagem,ativo:true});
+  });
+  if(!novos.length){
+    toast(invalidos?'Preencha nome e ao menos um horário (HH:MM) em cada bloco':'Nenhum remédio para salvar');
+    return;
+  }
+  var meds=saudGetMeds();
+  saudSetMeds(meds.concat(novos));
+  saudMedInicializarForm();
+  saudRenderMedLista();
+  saudRenderHoje();
+  var msg = invalidos
+    ? (novos.length+' remédio(s) salvo(s), '+invalidos+' bloco(s) ignorado(s) por faltar nome ou horário')
+    : (novos.length>1?(novos.length+' remédios adicionados!'):(saudMedIcon(novos[0].tipo)+' '+novos[0].nome+' adicionado!'));
+  toast(msg, 3500);
+}
+
+function saudMedRemover(id){
+  saudSetMeds(saudGetMeds().filter(function(m){return m.id!==id;}));
+  saudRenderMedLista();
+  saudRenderHoje();
+  toast('Removido');
+}
+
+function saudRenderMedLista(){
+  var el=document.getElementById('saud-med-lista');
+  if(!el) return;
+  var meds=saudGetMeds();
+  if(!meds.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-size:14px">Nada cadastrado ainda</div>';
+    return;
+  }
+  el.innerHTML=meds.map(function(m){
+    var icon=saudMedIcon(m.tipo);
+    var tipoLbl=saudMedTipoLabel(m.tipo);
+    var dosInfo=m.dosagem?'<span style="color:#A78BFA"> · '+escHtml(m.dosagem)+'</span>':'';
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'
+      +'<div style="flex:1">'
+        +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">'+icon+' '+escHtml(m.nome)+'</div>'
+        +'<div style="font-size:11px;color:var(--text2);margin-bottom:3px">'+tipoLbl+dosInfo+'</div>'
+        +'<div style="font-size:12px;color:var(--text2)">⏰ '+m.horarios.join(' · ')+'</div>'
+      +'</div>'
+      +'<button onclick="saudMedRemover('+m.id+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0">✕ Remover</button>'
+    +'</div>';
+  }).join('');
+}
+
+function saudPeriodoLabel(horario){
+  var h=parseInt(horario.split(':')[0],10);
+  if(h<12) return 'Manhã';
+  if(h<18) return 'Meio-dia';
+  return 'Noite';
+}
+
+function saudHojeCardUnico(it, hist, hoje, horaAtual){
+  var tomou=hist.some(function(r){return r.medId===it.medId&&r.horario===it.horario&&r.data===hoje&&r.tomou;});
+  var passou=it.horario<horaAtual;
+  var bg=tomou?'rgba(16,185,129,.12)':passou?'rgba(239,68,68,.08)':'var(--surface2)';
+  var bdr=tomou?'rgba(16,185,129,.4)':passou?'rgba(239,68,68,.35)':'var(--border)';
+  var icon=saudMedIcon(it.tipo);
+  var badge=tomou
+    ?'<span style="font-size:11px;color:#10B981;font-weight:700">✅ Tomado</span>'
+    :passou
+      ?'<span style="font-size:11px;color:#f87171;font-weight:700">⚠ Atrasado</span>'
+      :'<span style="font-size:11px;color:#A78BFA;font-weight:700">⏳ Aguardando</span>';
+  var dosInfo=it.dosagem?'<span style="font-size:12px;color:#A78BFA"> · '+escHtml(it.dosagem)+'</span>':'';
+  var btn=tomou
+    ?'<button onclick="saudDesfazerDose('+it.medId+',\''+it.horario+'\')" style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--text2);border-radius:10px;padding:8px 12px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap">Desfazer</button>'
+    :'<button onclick="saudTomarDose('+it.medId+',\''+it.horario+'\')" style="background:linear-gradient(135deg,#059669,#047857);border:none;color:#fff;border-radius:10px;padding:10px 16px;font-size:13px;cursor:pointer;font-weight:700;white-space:nowrap">✓ Tomei</button>';
+  return '<div style="background:'+bg+';border:1px solid '+bdr+';border-radius:14px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px">'+
+    '<div style="font-size:28px">'+icon+'</div>'+
+    '<div style="flex:1;min-width:0">'+
+      '<div style="font-size:15px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(it.nome)+'</div>'+
+      '<div style="font-size:12px;color:var(--text2);margin-top:2px">⏰ '+it.horario+dosInfo+'</div>'+
+      '<div style="margin-top:5px">'+badge+'</div>'+
+    '</div>'+
+    '<div style="flex-shrink:0">'+btn+'</div>'+
+  '</div>';
+}
+
+function saudHojeCardGrupo(horario, grupo, hist, hoje, horaAtual){
+  var algumPendente=grupo.some(function(it){return !hist.some(function(r){return r.medId===it.medId&&r.horario===it.horario&&r.data===hoje&&r.tomou;});});
+  var passou=horario<horaAtual;
+  var linhas=grupo.map(function(it){
+    var tomou=hist.some(function(r){return r.medId===it.medId&&r.horario===it.horario&&r.data===hoje&&r.tomou;});
+    var atrasadoTag=(!tomou&&passou)?' <span style="color:#f87171;font-size:10px;font-weight:700">· atrasado</span>':'';
+    var dosInfo=it.dosagem?' <span style="color:var(--text2)">· '+escHtml(it.dosagem)+'</span>':'';
+    var acao=tomou
+      ?'<button onclick="saudDesfazerDose('+it.medId+',\''+it.horario+'\')" style="background:none;border:none;color:#10B981;font-size:17px;cursor:pointer;padding:2px 4px" aria-label="Desfazer">✓</button>'
+      :'<button onclick="saudTomarDose('+it.medId+',\''+it.horario+'\')" style="background:none;border:1px solid #A78BFA;color:#A78BFA;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">Tomei</button>';
+    return '<div style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid rgba(255,255,255,.06)">'
+      +'<div style="font-size:16px">'+saudMedIcon(it.tipo)+'</div>'
+      +'<div style="flex:1;min-width:0;font-size:12px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(it.nome)+dosInfo+atrasadoTag+'</div>'
+      +acao
+    +'</div>';
+  }).join('');
+  var btnTodos=algumPendente?'<button onclick="saudMarcarTodos(\''+horario+'\')" style="font-size:10px;font-weight:700;color:#A78BFA;border:1px solid #A78BFA;border-radius:8px;padding:4px 8px;background:none;cursor:pointer;white-space:nowrap">Marcar todos</button>':'';
+  return '<div style="border-radius:14px;background:var(--surface2);border:1px solid var(--border);overflow:hidden;margin-bottom:12px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface3)">'
+      +'<div style="font-size:13px;font-weight:700;color:#fff">⏰ '+horario+' · '+grupo.length+' remédios</div>'
+      +btnTodos
+    +'</div>'
+    +linhas
+  +'</div>';
+}
+
+function saudMarcarTodos(horario){
+  var meds=saudGetMeds();
+  var hoje=saudHoje();
+  var hist=saudGetDoseHist();
+  var mudou=false;
+  var idBase=Date.now();
+  var contador=0;
+  meds.forEach(function(m){
+    if(m.horarios.indexOf(horario)===-1) return;
+    var jaTomou=hist.some(function(r){return r.medId===m.id&&r.horario===horario&&r.data===hoje&&r.tomou;});
+    if(jaTomou) return;
+    hist=hist.filter(function(r){return !(r.medId===m.id&&r.horario===horario&&r.data===hoje);});
+    hist.push({id:idBase+(contador++),medId:m.id,nome:m.nome,horario:horario,data:hoje,tomou:true,notificado:true,ts:Date.now()});
+    mudou=true;
+  });
+  if(mudou){
+    saudSetDoseHist(hist);
+    toast('✅ Todos marcados como tomados');
+    saudRenderHoje();
+  }
+}
+
+function saudRenderHoje(){
+  var el=document.getElementById('saud-hoje-lista');
+  if(!el) return;
+  var meds=saudGetMeds();
+  if(!meds.length){
+    el.innerHTML='<div style="text-align:center;padding:40px 16px;color:var(--text2);font-size:14px">'
+      +'💊<br><br>Nada cadastrado ainda.<br><br>'
+      +'<button onclick="saudTabSwitch(\'remedios\')" style="background:linear-gradient(135deg,#BE185D,#9D174D);border:none;color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer">Cadastrar</button>'
+      +'</div>';
+    return;
+  }
+  var hoje=saudHoje();
+  var agora=new Date();
+  var horaAtual=String(agora.getHours()).padStart(2,'0')+':'+String(agora.getMinutes()).padStart(2,'0');
+  var hist=saudGetDoseHist();
+
+  var dtStr=agora.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  var html='<div style="margin-bottom:14px;font-size:12px;font-weight:700;color:var(--text2);letter-spacing:0.5px">'+dtStr.toUpperCase()+'</div>';
+
+  var itens=[];
+  meds.forEach(function(m){
+    m.horarios.forEach(function(h){itens.push({medId:m.id,nome:m.nome,horario:h,tipo:m.tipo,dosagem:m.dosagem});});
+  });
+
+  if(!itens.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2)">Nenhum horário cadastrado</div>';
+    return;
+  }
+
+  var porHorario={};
+  itens.forEach(function(it){
+    if(!porHorario[it.horario]) porHorario[it.horario]=[];
+    porHorario[it.horario].push(it);
+  });
+  var horariosOrdenados=Object.keys(porHorario).sort();
+
+  var periodos={'Manhã':[],'Meio-dia':[],'Noite':[]};
+  horariosOrdenados.forEach(function(h){ periodos[saudPeriodoLabel(h)].push(h); });
+
+  ['Manhã','Meio-dia','Noite'].forEach(function(periodo){
+    var horariosDoPeriodo=periodos[periodo];
+    if(!horariosDoPeriodo.length) return;
+    html+='<div style="font-size:11px;font-weight:700;color:#FDA4C4;letter-spacing:1.5px;margin:0 0 8px">'+periodo.toUpperCase()+'</div>';
+    html+=horariosDoPeriodo.map(function(horario){
+      var grupo=porHorario[horario];
+      if(grupo.length>1) return saudHojeCardGrupo(horario, grupo, hist, hoje, horaAtual);
+      return saudHojeCardUnico(grupo[0], hist, hoje, horaAtual);
+    }).join('');
+  });
+
+  el.innerHTML=html;
+}
+
+function saudTomarDose(medId, horario){
+  var hist=saudGetDoseHist();
+  var hoje=saudHoje();
+  hist=hist.filter(function(r){return !(r.medId===medId&&r.horario===horario&&r.data===hoje);});
+  var med=saudGetMeds().filter(function(m){return m.id===medId;})[0]||{nome:'?'};
+  hist.push({id:Date.now(),medId:medId,nome:med.nome,horario:horario,data:hoje,tomou:true,notificado:true,ts:Date.now()});
+  saudSetDoseHist(hist);
+  toast('✅ '+med.nome+' registrado!');
+  saudRenderHoje();
+}
+
+function saudDesfazerDose(medId, horario){
+  var hoje=saudHoje();
+  saudSetDoseHist(saudGetDoseHist().filter(function(r){return !(r.medId===medId&&r.horario===horario&&r.data===hoje);}));
+  toast('Registro desfeito');
+  saudRenderHoje();
+}
+
+function saudChecarAlarmes(){
+  var meds=saudGetMeds();
+  if(!meds.length) return;
+  var agora=new Date();
+  var horaAgora=String(agora.getHours()).padStart(2,'0')+':'+String(agora.getMinutes()).padStart(2,'0');
+  var hoje=saudHoje();
+  var hist=saudGetDoseHist();
+  var atualizado=false;
+
+  meds.forEach(function(m){
+    m.horarios.forEach(function(h){
+      if(h!==horaAgora) return;
+      var jaNotificou=hist.some(function(r){return r.medId===m.id&&r.horario===h&&r.data===hoje;});
+      if(jaNotificou) return;
+      hist.push({id:Date.now(),medId:m.id,nome:m.nome,horario:h,data:hoje,tomou:false,notificado:true,ts:Date.now()});
+      atualizado=true;
+      toast(saudMedIcon(m.tipo)+' '+m.nome+' — hora de tomar!');
+      if('Notification' in window && Notification.permission==='granted'){
+        new Notification('💊 Hora do remédio!',{
+          body:m.nome+' — '+h,
+          icon:'/OohSaude/icon-512.png',
+          vibrate:[400,200,400,200,400]
+        });
+      }
+      if('vibrate' in navigator) navigator.vibrate([500,200,500,200,500]);
+    });
+  });
+
+  if(atualizado){
+    saudSetDoseHist(hist);
+    saudRenderHoje();
+  }
+}
+
+// --- sinais vitais ---
+var SAUD_VITAL_LABELS={pressao:'Pressão arterial',glicemia:'Glicemia',peso:'Peso',freq_cardiaca:'Frequência cardíaca'};
+
+function saudVitalTipoMudou(){
+  var tipo=document.getElementById('saud-vital-tipo');
+  var campos=document.getElementById('saud-vital-campos');
+  if(!tipo||!campos) return;
+  var v=tipo.value;
+  if(v==='pressao'){
+    campos.innerHTML='<div class="row"><div class="field"><label class="lbl">Sistólica</label><input type="number" id="saud-vital-v1" placeholder="Ex: 120"></div><div class="field"><label class="lbl">Diastólica</label><input type="number" id="saud-vital-v2" placeholder="Ex: 80"></div></div>';
+  } else if(v==='glicemia'){
+    campos.innerHTML='<div class="field"><label class="lbl">Valor (mg/dL)</label><input type="number" id="saud-vital-v1" placeholder="Ex: 95"></div>';
+  } else if(v==='peso'){
+    campos.innerHTML='<div class="field"><label class="lbl">Peso (kg)</label><input type="number" step="0.1" id="saud-vital-v1" placeholder="Ex: 72.5"></div>';
+  } else {
+    campos.innerHTML='<div class="field"><label class="lbl">BPM</label><input type="number" id="saud-vital-v1" placeholder="Ex: 72"></div>';
+  }
+}
+
+function saudVitalStatus(tipo,v1,v2){
+  if(tipo==='pressao'){
+    if(v1>=140||v2>=90) return {label:'Alta',cor:'#EF4444'};
+    if(v1>=120||v2>=80) return {label:'Elevada',cor:'#F59E0B'};
+    return {label:'Normal',cor:'#10B981'};
+  }
+  if(tipo==='glicemia'){
+    if(v1<70) return {label:'Baixa',cor:'#F59E0B'};
+    if(v1>=126) return {label:'Alta',cor:'#EF4444'};
+    if(v1>=100) return {label:'Elevada',cor:'#F59E0B'};
+    return {label:'Normal',cor:'#10B981'};
+  }
+  if(tipo==='freq_cardiaca'){
+    if(v1<60) return {label:'Baixa',cor:'#F59E0B'};
+    if(v1>100) return {label:'Alta',cor:'#EF4444'};
+    return {label:'Normal',cor:'#10B981'};
+  }
+  return {label:'—',cor:'var(--text2)'};
+}
+
+function saudVitalSalvar(){
+  var tipo=document.getElementById('saud-vital-tipo').value;
+  var v1raw=document.getElementById('saud-vital-v1').value;
+  if(v1raw===''){toast('Informe o valor');return;}
+  var v1=parseFloat(v1raw.replace(',','.'));
+  var v2=null;
+  if(tipo==='pressao'){
+    var v2el=document.getElementById('saud-vital-v2');
+    var v2raw=v2el?v2el.value:'';
+    if(v2raw===''){toast('Informe sistólica e diastólica');return;}
+    v2=parseFloat(v2raw.replace(',','.'));
+  }
+  if(isNaN(v1)||(tipo==='pressao'&&isNaN(v2))){toast('Valor inválido');return;}
+  var data=document.getElementById('saud-vital-data').value||saudHoje();
+  var vitais=saudGetVitais();
+  vitais.push({id:Date.now(),tipo:tipo,v1:v1,v2:v2,data:data});
+  saudSetVitais(vitais);
+  document.getElementById('saud-vital-v1').value='';
+  var v2el2=document.getElementById('saud-vital-v2'); if(v2el2) v2el2.value='';
+  saudRenderVitalLista();
+  toast('🩺 '+SAUD_VITAL_LABELS[tipo]+' registrado!');
+}
+
+function saudVitalRemover(id){
+  saudSetVitais(saudGetVitais().filter(function(v){return v.id!==id;}));
+  saudRenderVitalLista();
+  toast('Removido');
+}
+
+function saudVitalFormatoValor(tipo,v1,v2){
+  if(tipo==='pressao') return v1+'/'+v2;
+  if(tipo==='peso') return v1+' kg';
+  if(tipo==='glicemia') return v1+' mg/dL';
+  return v1+' bpm';
+}
+
+function saudRenderVitalLista(){
+  var el=document.getElementById('saud-vital-lista');
+  if(!el) return;
+  var vitais=saudGetVitais();
+  if(!vitais.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-size:14px">Nenhum sinal vital registrado ainda</div>';
+    return;
+  }
+  var grupos={};
+  vitais.forEach(function(v){ if(!grupos[v.tipo]) grupos[v.tipo]=[]; grupos[v.tipo].push(v); });
+  el.innerHTML=Object.keys(grupos).map(function(tipo){
+    var itens=grupos[tipo].slice().sort(function(a,b){return a.data.localeCompare(b.data);});
+    var ultimo=itens[itens.length-1];
+    var anterior=itens.length>1?itens[itens.length-2]:null;
+    var st=saudVitalStatus(tipo,ultimo.v1,ultimo.v2);
+    var seta='–';
+    if(anterior){
+      if(ultimo.v1>anterior.v1) seta='▲';
+      else if(ultimo.v1<anterior.v1) seta='▼';
+    }
+    var historicoLinhas=itens.slice().reverse().map(function(v){
+      var dtObj=new Date(v.data+'T12:00:00');
+      var dtStr=dtObj.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+      return '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)">'
+        +'<span style="font-size:12px;color:var(--text2);width:64px">'+dtStr+'</span>'
+        +'<span style="font-size:13px;color:#fff;flex:1">'+saudVitalFormatoValor(tipo,v.v1,v.v2)+'</span>'
+        +'<button onclick="saudVitalRemover('+v.id+')" style="background:none;border:none;color:var(--danger);font-size:14px;cursor:pointer;padding:2px 6px">✕</button>'
+        +'</div>';
+    }).join('');
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+        +'<div style="font-size:14px;font-weight:700;color:#fff">'+SAUD_VITAL_LABELS[tipo]+'</div>'
+        +'<div style="font-size:16px;font-weight:800;color:'+st.cor+'">'+saudVitalFormatoValor(tipo,ultimo.v1,ultimo.v2)+' '+seta+'</div>'
+      +'</div>'
+      +'<div style="font-size:11px;color:var(--text2);margin-bottom:8px"><span style="color:'+st.cor+';font-weight:700">'+st.label+'</span></div>'
+      +historicoLinhas
+    +'</div>';
+  }).join('');
+}
+
+// --- exames de sangue ---
+function saudExamePreset(){
+  var sel=document.getElementById('saud-ex-painel');
+  var nomeWrap=document.getElementById('saud-ex-nome-wrap');
+  if(!sel) return;
+  var opt=sel.options[sel.selectedIndex];
+  if(sel.value==='outro'){
+    nomeWrap.style.display='block';
+    document.getElementById('saud-ex-unidade').value='';
+    document.getElementById('saud-ex-refmin').value='';
+    document.getElementById('saud-ex-refmax').value='';
+  } else if(sel.value){
+    nomeWrap.style.display='none';
+    document.getElementById('saud-ex-unidade').value=opt.getAttribute('data-un')||'';
+    document.getElementById('saud-ex-refmin').value=opt.getAttribute('data-min')||'';
+    document.getElementById('saud-ex-refmax').value=opt.getAttribute('data-max')||'';
+  } else {
+    nomeWrap.style.display='none';
+  }
+}
+
+function saudExameStatus(valor,min,max){
+  if(min===null||max===null||isNaN(min)||isNaN(max)) return {label:'—',cor:'var(--text2)'};
+  if(valor<min) return {label:'Baixo',cor:'#F59E0B'};
+  if(valor>max) return {label:'Alto',cor:'#EF4444'};
+  return {label:'Normal',cor:'#10B981'};
+}
+
+function saudExameSalvar(){
+  var sel=document.getElementById('saud-ex-painel');
+  var painel=sel?sel.value:'';
+  if(!painel){toast('Selecione o exame');return;}
+  var nome = painel==='outro'
+    ? document.getElementById('saud-ex-nome').value.trim()
+    : sel.options[sel.selectedIndex].text;
+  if(!nome){toast('Informe o nome do exame');return;}
+  var valorRaw=document.getElementById('saud-ex-valor').value;
+  if(valorRaw===''){toast('Informe o valor do exame');return;}
+  var valor=parseFloat(valorRaw.replace(',','.'));
+  if(isNaN(valor)){toast('Valor inválido');return;}
+  var unidade=document.getElementById('saud-ex-unidade').value.trim();
+  var refMinRaw=document.getElementById('saud-ex-refmin').value;
+  var refMaxRaw=document.getElementById('saud-ex-refmax').value;
+  var refMin=refMinRaw===''?null:parseFloat(refMinRaw.replace(',','.'));
+  var refMax=refMaxRaw===''?null:parseFloat(refMaxRaw.replace(',','.'));
+  var data=document.getElementById('saud-ex-data').value||saudHoje();
+  var exames=saudGetExames();
+  exames.push({id:Date.now(),painel:painel,nome:nome,valor:valor,unidade:unidade,refMin:refMin,refMax:refMax,data:data});
+  saudSetExames(exames);
+  document.getElementById('saud-ex-valor').value='';
+  saudRenderExames();
+  toast('🧪 '+nome+' registrado!');
+}
+
+function saudExameRemover(id){
+  saudSetExames(saudGetExames().filter(function(e){return e.id!==id;}));
+  saudRenderExames();
+  toast('Removido');
+}
+
+function saudRenderExames(){
+  var el=document.getElementById('saud-ex-lista');
+  if(!el) return;
+  var exames=saudGetExames();
+  if(!exames.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-size:14px">Nenhum exame registrado ainda</div>';
+    return;
+  }
+  var grupos={};
+  exames.forEach(function(e){ if(!grupos[e.nome]) grupos[e.nome]=[]; grupos[e.nome].push(e); });
+  el.innerHTML=Object.keys(grupos).sort().map(function(nome){
+    var itens=grupos[nome].slice().sort(function(a,b){return a.data.localeCompare(b.data);});
+    var ultimo=itens[itens.length-1];
+    var anterior=itens.length>1?itens[itens.length-2]:null;
+    var st=saudExameStatus(ultimo.valor,ultimo.refMin,ultimo.refMax);
+    var seta='–';
+    if(anterior){
+      if(ultimo.valor>anterior.valor) seta='▲';
+      else if(ultimo.valor<anterior.valor) seta='▼';
+    }
+    var refTxt=(ultimo.refMin!==null&&ultimo.refMax!==null)?('ref. '+ultimo.refMin+'–'+ultimo.refMax+' '+ultimo.unidade):ultimo.unidade;
+    var historicoLinhas=itens.slice().reverse().map(function(e){
+      var dtObj=new Date(e.data+'T12:00:00');
+      var dtStr=dtObj.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+      return '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06)">'
+        +'<span style="font-size:12px;color:var(--text2);width:64px">'+dtStr+'</span>'
+        +'<span style="font-size:13px;color:#fff;flex:1">'+e.valor+' '+escHtml(e.unidade)+'</span>'
+        +'<button onclick="saudExameRemover('+e.id+')" style="background:none;border:none;color:var(--danger);font-size:14px;cursor:pointer;padding:2px 6px">✕</button>'
+        +'</div>';
+    }).join('');
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+        +'<div style="font-size:14px;font-weight:700;color:#fff">'+escHtml(nome)+'</div>'
+        +'<div style="font-size:16px;font-weight:800;color:'+st.cor+'">'+ultimo.valor+' '+seta+'</div>'
+      +'</div>'
+      +'<div style="font-size:11px;color:var(--text2);margin-bottom:8px">'+refTxt+' · <span style="color:'+st.cor+';font-weight:700">'+st.label+'</span></div>'
+      +historicoLinhas
+    +'</div>';
+  }).join('');
+}
+
+// --- vacinas ---
+function saudVacSalvar(){
+  var nome=document.getElementById('saud-vac-nome').value.trim();
+  if(!nome){toast('Informe o nome da vacina');return;}
+  var data=document.getElementById('saud-vac-data').value||saudHoje();
+  var proxima=document.getElementById('saud-vac-proxima').value||null;
+  var vacinas=saudGetVacinas();
+  vacinas.push({id:Date.now(),nome:nome,data:data,proxima:proxima});
+  saudSetVacinas(vacinas);
+  document.getElementById('saud-vac-nome').value='';
+  document.getElementById('saud-vac-proxima').value='';
+  saudRenderVacLista();
+  toast('💉 '+nome+' registrada!');
+}
+
+function saudVacRemover(id){
+  saudSetVacinas(saudGetVacinas().filter(function(v){return v.id!==id;}));
+  saudRenderVacLista();
+  toast('Removido');
+}
+
+function saudRenderVacLista(){
+  var el=document.getElementById('saud-vac-lista');
+  if(!el) return;
+  var vacinas=saudGetVacinas().slice().sort(function(a,b){return b.data.localeCompare(a.data);});
+  if(!vacinas.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-size:14px">Nenhuma vacina registrada ainda</div>';
+    return;
+  }
+  el.innerHTML=vacinas.map(function(v){
+    var dtObj=new Date(v.data+'T12:00:00');
+    var dtStr=dtObj.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+    var proximaTxt=v.proxima?('<div style="font-size:11px;color:#F59E0B;margin-top:2px">Próxima dose: '+new Date(v.proxima+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'})+'</div>'):'';
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'
+      +'<div style="flex:1">'
+        +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:2px">💉 '+escHtml(v.nome)+'</div>'
+        +'<div style="font-size:11px;color:var(--text2)">'+dtStr+'</div>'
+        +proximaTxt
+      +'</div>'
+      +'<button onclick="saudVacRemover('+v.id+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0">✕</button>'
+    +'</div>';
+  }).join('');
+}
+
+// --- consultas médicas ---
+function saudConsSalvar(){
+  var esp=document.getElementById('saud-cons-esp').value.trim();
+  if(!esp){toast('Informe a especialidade');return;}
+  var medico=document.getElementById('saud-cons-medico').value.trim();
+  var data=document.getElementById('saud-cons-data').value||saudHoje();
+  var retorno=document.getElementById('saud-cons-retorno').value||null;
+  var obs=document.getElementById('saud-cons-obs').value.trim();
+  var consultas=saudGetConsultas();
+  consultas.push({id:Date.now(),especialidade:esp,medico:medico,data:data,retorno:retorno,obs:obs});
+  saudSetConsultas(consultas);
+  document.getElementById('saud-cons-esp').value='';
+  document.getElementById('saud-cons-medico').value='';
+  document.getElementById('saud-cons-retorno').value='';
+  document.getElementById('saud-cons-obs').value='';
+  saudRenderConsLista();
+  toast('🗓️ Consulta registrada!');
+}
+
+function saudConsRemover(id){
+  saudSetConsultas(saudGetConsultas().filter(function(c){return c.id!==id;}));
+  saudRenderConsLista();
+  toast('Removido');
+}
+
+function saudRenderConsLista(){
+  var el=document.getElementById('saud-cons-lista');
+  if(!el) return;
+  var consultas=saudGetConsultas().slice().sort(function(a,b){return b.data.localeCompare(a.data);});
+  if(!consultas.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-size:14px">Nenhuma consulta registrada ainda</div>';
+    return;
+  }
+  el.innerHTML=consultas.map(function(c){
+    var dtObj=new Date(c.data+'T12:00:00');
+    var dtStr=dtObj.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+    var medicoTxt=c.medico?(' · '+escHtml(c.medico)):'';
+    var retornoTxt=c.retorno?('<div style="font-size:11px;color:#F59E0B;margin-top:2px">Retorno: '+new Date(c.retorno+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'})+'</div>'):'';
+    var obsTxt=c.obs?('<div style="font-size:12px;color:var(--text2);margin-top:4px">'+escHtml(c.obs)+'</div>'):'';
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'
+      +'<div style="flex:1">'
+        +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:2px">🗓️ '+escHtml(c.especialidade)+medicoTxt+'</div>'
+        +'<div style="font-size:11px;color:var(--text2)">'+dtStr+'</div>'
+        +retornoTxt+obsTxt
+      +'</div>'
+      +'<button onclick="saudConsRemover('+c.id+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0">✕</button>'
+    +'</div>';
+  }).join('');
+}
+
+// --- diário (sintomas + humor) ---
+var saudHumorAtual=null;
+var SAUD_HUMOR_EMOJI={1:'😞',2:'🙁',3:'😐',4:'🙂',5:'😄'};
+var SAUD_HUMOR_LABEL={1:'Péssimo',2:'Ruim',3:'Neutro',4:'Bom',5:'Ótimo'};
+
+function saudHumorSelecionar(v){
+  saudHumorAtual=v;
+  document.querySelectorAll('#saud-humor-opcoes [data-humor]').forEach(function(b){
+    b.classList.toggle('humor-ativo', parseInt(b.getAttribute('data-humor'),10)===v);
+  });
+}
+
+function saudDiarioSalvar(){
+  var sintomas=document.getElementById('saud-diario-sintomas').value.trim();
+  var intensidade=document.getElementById('saud-diario-intensidade').value;
+  var obs=document.getElementById('saud-diario-obs').value.trim();
+  var data=document.getElementById('saud-diario-data').value||saudHoje();
+  if(!saudHumorAtual && !sintomas && !obs){toast('Escolha um humor ou descreva algo');return;}
+  var diario=saudGetDiario();
+  diario.push({id:Date.now(),data:data,humor:saudHumorAtual,sintomas:sintomas,intensidade:intensidade,obs:obs});
+  saudSetDiario(diario);
+  document.getElementById('saud-diario-sintomas').value='';
+  document.getElementById('saud-diario-intensidade').value='';
+  document.getElementById('saud-diario-obs').value='';
+  saudHumorSelecionar(null);
+  saudRenderDiarioLista();
+  toast('📝 Registro salvo!');
+}
+
+function saudDiarioRemover(id){
+  saudSetDiario(saudGetDiario().filter(function(d){return d.id!==id;}));
+  saudRenderDiarioLista();
+  toast('Removido');
+}
+
+function saudRenderDiarioLista(){
+  var el=document.getElementById('saud-diario-lista');
+  if(!el) return;
+  var diario=saudGetDiario().slice().sort(function(a,b){return b.data.localeCompare(a.data)||b.id-a.id;});
+  if(!diario.length){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2);font-size:14px">Nenhum registro ainda</div>';
+    return;
+  }
+  el.innerHTML=diario.map(function(d){
+    var dtObj=new Date(d.data+'T12:00:00');
+    var dtStr=dtObj.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+    var humorTxt=d.humor?(SAUD_HUMOR_EMOJI[d.humor]+' '+SAUD_HUMOR_LABEL[d.humor]):'';
+    var sintomasTxt=d.sintomas?('<div style="font-size:12px;color:var(--text2);margin-top:2px">'+escHtml(d.sintomas)+(d.intensidade?(' · '+d.intensidade):'')+'</div>'):'';
+    var obsTxt=d.obs?('<div style="font-size:12px;color:var(--text2);margin-top:4px">'+escHtml(d.obs)+'</div>'):'';
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px">'
+      +'<div style="flex:1">'
+        +'<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:2px">'+(humorTxt||'📝 Registro')+'</div>'
+        +'<div style="font-size:11px;color:var(--text2)">'+dtStr+'</div>'
+        +sintomasTxt+obsTxt
+      +'</div>'
+      +'<button onclick="saudDiarioRemover('+d.id+')" style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0">✕</button>'
+    +'</div>';
+  }).join('');
+}
+
+// --- backup e restauração de dados ---
+function saudBackupExportar(){
+  var dados={};
+  SAUD_BACKUP_KEYS.forEach(function(k){
+    var v=localStorage.getItem(k);
+    if(v!==null) dados[k]=v;
+  });
+  var payload={app:'ooh-saude',versao:1,exportadoEm:new Date().toISOString(),dados:dados};
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='ooh-saude-backup-'+saudHoje()+'.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
+  toast('Backup exportado!');
+}
+
+function saudBackupImportar(event){
+  var file=event.target.files&&event.target.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    try{
+      var payload=JSON.parse(reader.result);
+      if(!payload||!payload.dados||payload.app!=='ooh-saude'){
+        toast('Arquivo de backup inválido');
+        return;
+      }
+      if(!confirm('Isso vai substituir os dados atuais pelos do backup. Continuar?')) return;
+      SAUD_BACKUP_KEYS.forEach(function(k){
+        if(payload.dados[k]!==undefined) localStorage.setItem(k,payload.dados[k]);
+      });
+      saudInit();
+      toast('Backup importado!');
+    }catch(e){
+      toast('Não foi possível ler o arquivo');
+    }
+    event.target.value='';
+  };
+  reader.readAsText(file);
+}
+
+// --- exportar resumo (impressão / PDF) ---
+function saudExportarResumo(){
+  var perfil=saudGetEmergencia();
+  var meds=saudGetMeds();
+  var vitais=saudGetVitais().slice().sort(function(a,b){return b.data.localeCompare(a.data);});
+  var exames=saudGetExames().slice().sort(function(a,b){return b.data.localeCompare(a.data);});
+  var vacinas=saudGetVacinas().slice().sort(function(a,b){return b.data.localeCompare(a.data);});
+
+  var html='<h1>Resumo de saúde'+(perfil&&perfil.nome?(' — '+escHtml(perfil.nome)):'')+'</h1>';
+  html+='<div style="font-size:12px;margin-bottom:16px">Gerado em '+new Date().toLocaleDateString('pt-BR')+'</div>';
+
+  if(perfil){
+    html+='<h2>Informações gerais</h2>';
+    if(perfil.tipoSangue) html+='<div class="item">Tipo sanguíneo: '+escHtml(perfil.tipoSangue)+'</div>';
+    if(perfil.alergias) html+='<div class="item">Alergias: '+escHtml(perfil.alergias)+'</div>';
+    if(perfil.condicoes) html+='<div class="item">Condições de saúde: '+escHtml(perfil.condicoes)+'</div>';
+  }
+
+  html+='<h2>Remédios em uso</h2>';
+  html+=meds.length
+    ? meds.map(function(m){return '<div class="item">'+escHtml(m.nome)+(m.dosagem?(' — '+escHtml(m.dosagem)):'')+' · '+m.horarios.join(', ')+'</div>';}).join('')
+    : '<div class="item">Nenhum cadastrado</div>';
+
+  html+='<h2>Sinais vitais recentes</h2>';
+  html+=vitais.length
+    ? vitais.slice(0,15).map(function(v){return '<div class="item">'+v.data+' — '+SAUD_VITAL_LABELS[v.tipo]+': '+saudVitalFormatoValor(v.tipo,v.v1,v.v2)+'</div>';}).join('')
+    : '<div class="item">Nenhum registrado</div>';
+
+  html+='<h2>Exames de sangue recentes</h2>';
+  html+=exames.length
+    ? exames.slice(0,15).map(function(e){return '<div class="item">'+e.data+' — '+escHtml(e.nome)+': '+e.valor+' '+escHtml(e.unidade)+'</div>';}).join('')
+    : '<div class="item">Nenhum registrado</div>';
+
+  html+='<h2>Vacinas</h2>';
+  html+=vacinas.length
+    ? vacinas.map(function(v){return '<div class="item">'+v.data+' — '+escHtml(v.nome)+'</div>';}).join('')
+    : '<div class="item">Nenhuma registrada</div>';
+
+  document.getElementById('saud-print-area').innerHTML=html;
+  window.print();
+}
+
+// --- caminhada ---
+function saudCamMotionHandler(e){
+  var acc=e.accelerationIncludingGravity||e.acceleration;
+  if(!acc||acc.x===null) return;
+  var mag=Math.sqrt(Math.pow(acc.x||0,2)+Math.pow(acc.y||0,2)+Math.pow(acc.z||0,2));
+  if(saudCamAvgAccel===null) saudCamAvgAccel=mag;
+  saudCamAvgAccel=saudCamAvgAccel*0.9+mag*0.1;
+  var delta=mag-saudCamAvgAccel;
+  var agora=Date.now();
+  if(delta>1.2 && (agora-saudCamLastPeakTs)>300){
+    saudCamPassosSessao++;
+    saudCamLastPeakTs=agora;
+    var c=document.getElementById('saud-cam-contador');
+    if(c) c.textContent=saudCamPassosSessao;
+  }
+}
+
+function saudCamIniciar(){
+  function attach(){
+    saudCamAtivo=true;
+    saudCamPassosSessao=0;
+    saudCamAvgAccel=null;
+    saudCamLastPeakTs=0;
+    saudCamInicioTs=Date.now();
+    var c=document.getElementById('saud-cam-contador'); if(c) c.textContent='0';
+    window.addEventListener('devicemotion', saudCamMotionHandler);
+    var bi=document.getElementById('saud-cam-btn-iniciar'); if(bi) bi.style.display='none';
+    var bp=document.getElementById('saud-cam-btn-parar'); if(bp) bp.style.display='flex';
+    toast('Contador iniciado — mantenha o celular no bolso');
+  }
+  if(typeof DeviceMotionEvent!=='undefined' && typeof DeviceMotionEvent.requestPermission==='function'){
+    DeviceMotionEvent.requestPermission().then(function(resp){
+      if(resp==='granted') attach(); else toast('Permissão de movimento negada');
+    }).catch(function(){toast('Não foi possível acessar o sensor de movimento');});
+  } else if('DeviceMotionEvent' in window){
+    attach();
+  } else {
+    toast('Sensor de movimento não disponível neste aparelho');
+  }
+}
+
+function saudCamParar(){
+  if(!saudCamAtivo) return;
+  window.removeEventListener('devicemotion', saudCamMotionHandler);
+  saudCamAtivo=false;
+  var bi=document.getElementById('saud-cam-btn-iniciar'); if(bi) bi.style.display='flex';
+  var bp=document.getElementById('saud-cam-btn-parar'); if(bp) bp.style.display='none';
+  var durMin=Math.max(1,Math.round((Date.now()-saudCamInicioTs)/60000));
+  if(saudCamPassosSessao>0){
+    var lista=saudGetCaminhadas();
+    lista.push({id:Date.now(),data:saudHoje(),passos:saudCamPassosSessao,distanciaKm:null,duracaoMin:durMin,origem:'contador'});
+    saudSetCaminhadas(lista);
+    toast('✅ '+saudCamPassosSessao+' passos salvos!');
+  } else {
+    toast('Sessão encerrada sem passos detectados');
+  }
+  var c=document.getElementById('saud-cam-contador'); if(c) c.textContent='0';
+  saudRenderCamResumo();
+  var histPane=document.getElementById('saud-pane-hist');
+  if(histPane&&histPane.classList.contains('active')) saudRenderHist();
+}
+
+function saudCamSalvarManual(){
+  var passosRaw=document.getElementById('saud-cam-passos').value;
+  var distRaw=document.getElementById('saud-cam-dist').value;
+  var durRaw=document.getElementById('saud-cam-dur').value;
+  var data=document.getElementById('saud-cam-data').value||saudHoje();
+  if(passosRaw===''&&distRaw===''){toast('Informe ao menos passos ou distância');return;}
+  var lista=saudGetCaminhadas();
+  lista.push({
+    id:Date.now(),
+    data:data,
+    passos:passosRaw===''?null:parseInt(passosRaw,10),
+    distanciaKm:distRaw===''?null:parseFloat(distRaw.replace(',','.')),
+    duracaoMin:durRaw===''?null:parseInt(durRaw,10),
+    origem:'manual'
+  });
+  saudSetCaminhadas(lista);
+  document.getElementById('saud-cam-passos').value='';
+  document.getElementById('saud-cam-dist').value='';
+  document.getElementById('saud-cam-dur').value='';
+  saudRenderCamResumo();
+  toast('🚶 Caminhada registrada!');
+}
+
+function saudCamMetaSalvar(){
+  var el=document.getElementById('saud-cam-meta');
+  if(!el) return;
+  var v=parseInt(el.value,10);
+  if(v&&v>0) saudSetMeta(v);
+}
+
+function saudRenderCamResumo(){
+  var el=document.getElementById('saud-cam-resumo');
+  if(!el) return;
+  var lista=saudGetCaminhadas();
+  var limite=new Date(); limite.setDate(limite.getDate()-6);
+  var limiteStr=limite.toISOString().slice(0,10);
+  var recentes=lista.filter(function(c){return c.data>=limiteStr;});
+  var totalPassos=recentes.reduce(function(s,c){return s+(c.passos||0);},0);
+  var totalDist=recentes.reduce(function(s,c){return s+(c.distanciaKm||0);},0);
+  var meta=saudGetMeta();
+  var mediaDia=Math.round(totalPassos/7);
+  var pct=Math.min(100,Math.round((mediaDia/meta)*100));
+  el.innerHTML='<div style="display:flex;justify-content:space-between;margin-bottom:8px">'
+    +'<div><div style="font-size:22px;font-weight:900;color:#A78BFA">'+totalPassos+'</div><div style="font-size:11px;color:var(--text2)">passos (7 dias)</div></div>'
+    +'<div><div style="font-size:22px;font-weight:900;color:#A78BFA">'+totalDist.toFixed(1)+' km</div><div style="font-size:11px;color:var(--text2)">distância (7 dias)</div></div>'
+    +'<div><div style="font-size:22px;font-weight:900;color:#A78BFA">'+mediaDia+'</div><div style="font-size:11px;color:var(--text2)">média/dia</div></div>'
+    +'</div>'
+    +'<div style="background:var(--surface3);border-radius:8px;height:10px;overflow:hidden;margin-bottom:4px">'
+      +'<div style="background:linear-gradient(90deg,#059669,#10B981);height:100%;width:'+pct+'%"></div>'
+    +'</div>'
+    +'<div style="font-size:11px;color:var(--text2)">'+pct+'% da meta diária ('+meta+' passos)</div>';
+}
+
+// --- água ---
+function saudAguaAdd(delta){
+  var hoje=saudHoje();
+  var mapa=saudGetAgua();
+  var atual=mapa[hoje]||0;
+  atual=Math.max(0,atual+delta);
+  mapa[hoje]=atual;
+  saudSetAgua(mapa);
+  var meta=saudGetMetaAgua();
+  var el=document.getElementById('saud-agua-contador');
+  if(el) el.textContent=atual+' / '+meta;
+  saudRenderAtividadeRings();
+}
+
+function saudAguaMetaSalvar(){
+  var el=document.getElementById('saud-agua-meta');
+  if(!el) return;
+  var v=parseInt(el.value,10);
+  if(v&&v>0) saudSetMetaAgua(v);
+  var hoje=saudHoje();
+  var atual=saudGetAgua()[hoje]||0;
+  var contEl=document.getElementById('saud-agua-contador');
+  if(contEl) contEl.textContent=atual+' / '+saudGetMetaAgua();
+  saudRenderAtividadeRings();
+}
+
+// --- sono ---
+function saudSonoSalvar(){
+  var el=document.getElementById('saud-sono-horas');
+  if(!el) return;
+  var v=parseFloat(el.value.replace(',','.'));
+  var mapa=saudGetSono();
+  var hoje=saudHoje();
+  if(!isNaN(v)&&v>=0){ mapa[hoje]=v; saudSetSono(mapa); }
+  saudRenderAtividadeRings();
+}
+
+function saudSonoMetaSalvar(){
+  var el=document.getElementById('saud-sono-meta');
+  if(!el) return;
+  var v=parseFloat(el.value.replace(',','.'));
+  if(v&&v>0) saudSetMetaSono(v);
+  saudRenderAtividadeRings();
+}
+
+// --- anéis de atividade (passos / água / sono) ---
+function saudPassosHoje(){
+  var hoje=saudHoje();
+  return saudGetCaminhadas().filter(function(c){return c.data===hoje;}).reduce(function(s,c){return s+(c.passos||0);},0);
+}
+
+function saudRenderAtividadeRings(){
+  var passos=saudPassosHoje();
+  var metaPassos=saudGetMeta();
+  var hoje=saudHoje();
+  var agua=saudGetAgua()[hoje]||0;
+  var metaAgua=saudGetMetaAgua();
+  var sono=saudGetSono()[hoje]||0;
+  var metaSono=saudGetMetaSono();
+
+  var raios={passos:62,agua:47,sono:32};
+  var pcts={
+    passos:Math.min(1,passos/metaPassos),
+    agua:Math.min(1,agua/metaAgua),
+    sono:Math.min(1,sono/metaSono)
+  };
+  ['passos','agua','sono'].forEach(function(k){
+    var circ=document.getElementById('saud-anel-'+k);
+    if(!circ) return;
+    var c=2*Math.PI*raios[k];
+    circ.setAttribute('stroke-dasharray',c.toFixed(1));
+    circ.setAttribute('stroke-dashoffset',(c*(1-pcts[k])).toFixed(1));
+  });
+
+  var legenda=document.getElementById('saud-ativ-legenda');
+  if(legenda){
+    legenda.innerHTML=
+      '<div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block"></span>'+passos+' passos</div>'
+      +'<div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#378ADD;display:inline-block"></span>'+agua+' de '+metaAgua+' copos</div>'
+      +'<div style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#A78BFA;display:inline-block"></span>'+saudFormataHoras(sono)+' de sono</div>';
+  }
+
+  var aguaCont=document.getElementById('saud-agua-contador');
+  if(aguaCont) aguaCont.textContent=agua+' / '+metaAgua;
+}
+
+function saudFormataHoras(v){
+  if(!v) return '0h';
+  var h=Math.floor(v);
+  var m=Math.round((v-h)*60);
+  return m>0?(h+'h'+m+'min'):(h+'h');
+}
+
+// --- histórico consolidado ---
+function saudRenderHist(){
+  var el=document.getElementById('saud-hist-lista');
+  if(!el) return;
+  var eventos=[];
+  saudGetDoseHist().forEach(function(r){
+    eventos.push({data:r.data,ts:r.ts||0,tipo:'med',icon:r.tomou?'✅':'⏰',texto:(r.tomou?'Tomou ':'Alarme ')+r.nome+' ('+r.horario+')'});
+  });
+  saudGetExames().forEach(function(e){
+    eventos.push({data:e.data,ts:e.id,tipo:'exame',icon:'🧪',texto:'Exame '+e.nome+': '+e.valor+' '+e.unidade});
+  });
+  saudGetCaminhadas().forEach(function(c){
+    var partes=[];
+    if(c.passos) partes.push(c.passos+' passos');
+    if(c.distanciaKm) partes.push(c.distanciaKm+' km');
+    if(c.duracaoMin) partes.push(c.duracaoMin+' min');
+    eventos.push({data:c.data,ts:c.id,tipo:'caminhada',icon:'🚶',texto:'Caminhada: '+(partes.join(' · ')||'registrada')});
+  });
+  saudGetVitais().forEach(function(v){
+    eventos.push({data:v.data,ts:v.id,tipo:'vital',icon:'🩺',texto:SAUD_VITAL_LABELS[v.tipo]+': '+saudVitalFormatoValor(v.tipo,v.v1,v.v2)});
+  });
+  saudGetVacinas().forEach(function(v){
+    eventos.push({data:v.data,ts:v.id,tipo:'vacina',icon:'💉',texto:'Vacina: '+v.nome});
+  });
+  saudGetConsultas().forEach(function(c){
+    eventos.push({data:c.data,ts:c.id,tipo:'consulta',icon:'🗓️',texto:'Consulta: '+c.especialidade+(c.medico?(' · '+c.medico):'')});
+  });
+  saudGetDiario().forEach(function(d){
+    var partes=[];
+    if(d.humor) partes.push(SAUD_HUMOR_EMOJI[d.humor]+' '+SAUD_HUMOR_LABEL[d.humor]);
+    if(d.sintomas) partes.push(d.sintomas);
+    eventos.push({data:d.data,ts:d.id,tipo:'diario',icon:'📝',texto:'Diário: '+(partes.join(' · ')||'registro')});
+  });
+  if(!eventos.length){
+    el.innerHTML='<div style="text-align:center;padding:40px 16px;color:var(--text2);font-size:14px">Nenhum histórico ainda.<br><br>Os registros de remédios, sinais vitais, exames, caminhadas, vacinas e consultas aparecem aqui.</div>';
+    return;
+  }
+  var grupos={};
+  eventos.forEach(function(e){ if(!grupos[e.data]) grupos[e.data]=[]; grupos[e.data].push(e); });
+  var hoje=saudHoje();
+  el.innerHTML=Object.keys(grupos).sort(function(a,b){return b.localeCompare(a);}).slice(0,30).map(function(data){
+    var itens=grupos[data].slice().sort(function(a,b){return (b.ts||0)-(a.ts||0);});
+    var dtObj=new Date(data+'T12:00:00');
+    var dtStr=dtObj.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'});
+    var isHoje=data===hoje;
+    return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px">'
+      +'<div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:10px">'+(isHoje?'📅 Hoje — ':'')+dtStr+'</div>'
+      +itens.map(function(e){
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)">'
+          +'<span style="font-size:16px">'+e.icon+'</span>'
+          +'<span style="font-size:13px;color:#fff;flex:1">'+escHtml(e.texto)+'</span>'
+        +'</div>';
+      }).join('')
+    +'</div>';
+  }).join('');
+}
+
+// --- perfil de emergência (SOS) ---
+function saudSosAbrir(){
+  saudSosRenderView();
+  document.getElementById('saud-sos-edit').style.display='none';
+  document.getElementById('saud-sos-view').style.display='block';
+  document.getElementById('saud-sos-modal').style.display='block';
+}
+
+function saudSosFechar(){
+  document.getElementById('saud-sos-modal').style.display='none';
+}
+
+function saudSosRenderView(){
+  var view=document.getElementById('saud-sos-view');
+  if(!view) return;
+  var perfil=saudGetEmergencia();
+  var meds=saudGetMeds();
+  var medsTxt=meds.length
+    ? meds.map(function(m){return escHtml(m.nome)+(m.dosagem?(' ('+escHtml(m.dosagem)+')'):'');}).join(', ')
+    : 'Nenhum cadastrado';
+  if(!perfil){
+    view.innerHTML='<div style="text-align:center;padding:16px 0;color:var(--text2);font-size:13px">Nenhuma informação de emergência cadastrada ainda.</div>';
+    return;
+  }
+  var contatoLinha=perfil.contatoTel
+    ? '<a href="tel:'+escHtml(perfil.contatoTel)+'" style="color:#fff;text-decoration:none">'+escHtml(perfil.contatoNome||'Contato')+' — '+escHtml(perfil.contatoTel)+'</a>'
+    : escHtml(perfil.contatoNome||'—');
+  view.innerHTML=
+    '<div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:10px">'+escHtml(perfil.nome||'—')+'</div>'
+    +'<div style="display:flex;flex-direction:column;gap:10px;font-size:13px">'
+    +'<div><span style="color:var(--text2)">Tipo sanguíneo:</span> <strong style="color:#fff">'+escHtml(perfil.tipoSangue||'—')+'</strong></div>'
+    +'<div><span style="color:var(--text2)">Alergias:</span> <strong style="color:#fff">'+escHtml(perfil.alergias||'Nenhuma informada')+'</strong></div>'
+    +'<div><span style="color:var(--text2)">Condições de saúde:</span> <strong style="color:#fff">'+escHtml(perfil.condicoes||'Nenhuma informada')+'</strong></div>'
+    +'<div><span style="color:var(--text2)">Medicamentos em uso:</span> <strong style="color:#fff">'+medsTxt+'</strong></div>'
+    +'<div><span style="color:var(--text2)">Contato de emergência:</span> <strong>'+contatoLinha+'</strong></div>'
+    +'</div>';
+}
+
+function saudSosEditar(){
+  var perfil=saudGetEmergencia()||{};
+  document.getElementById('saud-sos-nome').value=perfil.nome||'';
+  document.getElementById('saud-sos-tipo-sang').value=perfil.tipoSangue||'';
+  document.getElementById('saud-sos-contato-nome').value=perfil.contatoNome||'';
+  document.getElementById('saud-sos-contato-tel').value=perfil.contatoTel||'';
+  document.getElementById('saud-sos-alergias').value=perfil.alergias||'';
+  document.getElementById('saud-sos-condicoes').value=perfil.condicoes||'';
+  document.getElementById('saud-sos-view').style.display='none';
+  document.getElementById('saud-sos-edit').style.display='block';
+}
+
+function saudSosSalvarPerfil(){
+  var perfil={
+    nome:document.getElementById('saud-sos-nome').value.trim(),
+    tipoSangue:document.getElementById('saud-sos-tipo-sang').value.trim(),
+    contatoNome:document.getElementById('saud-sos-contato-nome').value.trim(),
+    contatoTel:document.getElementById('saud-sos-contato-tel').value.trim(),
+    alergias:document.getElementById('saud-sos-alergias').value.trim(),
+    condicoes:document.getElementById('saud-sos-condicoes').value.trim()
+  };
+  saudSetEmergencia(perfil);
+  document.getElementById('saud-sos-edit').style.display='none';
+  document.getElementById('saud-sos-view').style.display='block';
+  saudSosRenderView();
+  toast('Perfil de emergência salvo!');
+}
+
+window.addEventListener('load',function(){
+  saudInit();
+  saudChecarAlarmes();
+  setInterval(saudChecarAlarmes,30000);
+});
+
+// Service worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('/OohSaude/sw.js')
+      .then(function(r){console.log('SW Ooh! Saúde registrado',r.scope);})
+      .catch(function(e){console.warn('SW erro',e);});
+  });
+}
+
+// iOS install banner
+(function(){
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isStandalone=window.navigator.standalone===true;
+  var dismissed=localStorage.getItem('ios-saude-dismissed');
+  if(isIOS && !isStandalone && !dismissed){
+    setTimeout(function(){document.getElementById('ios-banner').style.display='block';},2000);
+  }
+})();
+
+// Android: captura beforeinstallprompt para banner de instalação nativo
+(function(){
+  var deferredPrompt=null;
+  var isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+  var dismissed=localStorage.getItem('android-install-saude-dismissed');
+  if(isStandalone||dismissed)return;
+
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();
+    deferredPrompt=e;
+    setTimeout(function(){
+      document.getElementById('android-install-banner').style.display='block';
+    },2500);
+  });
+
+  window.androidInstalarAgora=function(){
+    if(!deferredPrompt)return;
+    document.getElementById('android-install-banner').style.display='none';
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(r){
+      if(r.outcome==='accepted'){
+        localStorage.setItem('android-install-saude-dismissed','1');
+      }
+      deferredPrompt=null;
+    });
+  };
+
+  window.androidDismissBanner=function(){
+    document.getElementById('android-install-banner').style.display='none';
+    localStorage.setItem('android-install-saude-dismissed','1');
+  };
+
+  window.addEventListener('appinstalled',function(){
+    document.getElementById('android-install-banner').style.display='none';
+    localStorage.setItem('android-install-saude-dismissed','1');
+  });
+})();
+</script>
+</body>
+</html>
